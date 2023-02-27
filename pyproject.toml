@@ -8,7 +8,8 @@ packages = [{include = "gridvid"}]
 
 
 [tool.poetry.scripts]
-dev = "gridvid.gridvid:run"
+cli = "gridvid.gridvid:run"
+gui = "gridvid.gui:run"
 
 
 [tool.poetry.dependencies]
