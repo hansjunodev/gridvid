@@ -1,4 +1,3 @@
-import pathlib
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -7,10 +6,12 @@ from gridvid import utils
 
 
 class Gui:
-    filename: StringVar = ""
-    video: gridvid.GridVid = None
+    folder: StringVar
+    filename: StringVar
+    video: gridvid.GridVid
 
     def __init__(self, root: Tk) -> None:
+        self.root = root
         root.title("gridvid")
 
         mainframe = ttk.Frame(root, padding="3 3 12 12")
@@ -19,8 +20,9 @@ class Gui:
         root.rowconfigure(0, weight=1)
 
         # Global Vars
-        self.filename = StringVar()
         self.folder = StringVar()
+        self.filename = StringVar()
+        self.video = None
 
         # Make Filepicker
         self.folder.set(filedialog.askdirectory(title="Select a folder"))
@@ -40,7 +42,7 @@ class Gui:
         self.filename_entry.grid(column=1, row=2, columnspan=2, sticky=(W, E))
 
         # Make Buttons
-        ttk.Button(mainframe, text="Play", command=self.play_video).grid(
+        ttk.Button(mainframe, text="Play", command=self.start_playback).grid(
             column=1, row=3, sticky=(W, E)
         )
 
@@ -54,27 +56,30 @@ class Gui:
         t.geometry("+960+0")
         t.overrideredirect(1)
 
-        ttk.Button(t, text="<", width=3, command=self.prev_video).grid(column=1, row=1)
-        ttk.Button(t, text="▶", width=3, command=self.play_video).grid(column=2, row=1)
+        ttk.Button(t, text="<", width=3, command=self.play_prev_video).grid(
+            column=1, row=1
+        )
+        ttk.Button(t, text="▶", width=3, command=self.start_playback).grid(
+            column=2, row=1
+        )
         ttk.Button(t, text="■", width=3, command=self.stop_playback).grid(
             column=3, row=1
         )
-        ttk.Button(t, text=">", width=3, command=self.next_video).grid(column=4, row=1)
-        ttk.Button(t, text="X", width=3, command=lambda: root.destroy()).grid(
-            column=5, row=1
+        ttk.Button(t, text=">", width=3, command=self.play_next_video).grid(
+            column=4, row=1
         )
+        ttk.Button(t, text="X", width=3, command=self.close).grid(column=5, row=1)
 
         # Add Padding
         for child in mainframe.winfo_children():
             child.grid_configure(padx=5, pady=5)
 
-        root.bind("<Return>", self.play_video)
+        root.bind("<Return>", self.start_playback)
 
     def tree_clicked(self, *args):
         self.filename.set(self.tree.focus())
-        print(self.tree.focus())
 
-    def play_video(self, *args):
+    def start_playback(self, *args):
         self.stop_playback()
         self.video = gridvid.GridVid(self.filename.get())
         self.video.play()
@@ -83,17 +88,23 @@ class Gui:
         if self.video is not None:
             self.video.stop()
 
-    def prev_video(self, *args):
-        self.stop_playback()
-        selected = self.tree.item(self.tree.focus())
-        print(selected)
-        print(self.tree.prev(selected))
-        self.tree.focus(self.tree.prev(selected))
+    def play_prev_video(self, *args):
+        prev_item = self.tree.prev(self.tree.focus())
+        self.tree.focus(prev_item)
+        self.tree.selection_set(prev_item)
+        self.filename.set(self.tree.focus())
+        self.start_playback()
 
-    def next_video(self, *args):
+    def play_next_video(self, *args):
+        next_item = self.tree.next(self.tree.focus())
+        self.tree.focus(next_item)
+        self.tree.selection_set(next_item)
+        self.filename.set(self.tree.focus())
+        self.start_playback()
+
+    def close(self, *args):
         self.stop_playback()
-        selected = self.tree.item(self.tree.focus())
-        self.tree.focus(self.tree.next(selected))
+        self.root.destroy()
 
 
 def run():
