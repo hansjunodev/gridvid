@@ -32,7 +32,7 @@ class Gui:
         for file in utils.get_video_files(self.folder.get()):
             self.tree.insert("", "end", file.absolute(), text=file.name, tags=("file"))
 
-        self.tree.tag_configure("file", background="yellow")
+        # self.tree.tag_configure("file", background="yellow")
         self.tree.tag_bind("file", "<ButtonRelease-1>", self.tree_clicked)
 
         # Make Entry
@@ -44,7 +44,7 @@ class Gui:
             column=1, row=3, sticky=(W, E)
         )
 
-        ttk.Button(mainframe, text="Stop", command=self.stop_video).grid(
+        ttk.Button(mainframe, text="Stop", command=self.stop_playback).grid(
             column=2, row=3, sticky=(W, E)
         )
 
@@ -53,12 +53,16 @@ class Gui:
         t.attributes("-topmost", True)
         t.geometry("+960+0")
         t.overrideredirect(1)
-        
+
         ttk.Button(t, text="<", width=3, command=self.prev_video).grid(column=1, row=1)
         ttk.Button(t, text="▶", width=3, command=self.play_video).grid(column=2, row=1)
-        ttk.Button(t, text="■", width=3, command=self.stop_video).grid(column=3, row=1)
+        ttk.Button(t, text="■", width=3, command=self.stop_playback).grid(
+            column=3, row=1
+        )
         ttk.Button(t, text=">", width=3, command=self.next_video).grid(column=4, row=1)
-        ttk.Button(t, text="X", width=3, command=lambda: root.destroy()).grid(column=5, row=1)
+        ttk.Button(t, text="X", width=3, command=lambda: root.destroy()).grid(
+            column=5, row=1
+        )
 
         # Add Padding
         for child in mainframe.winfo_children():
@@ -74,17 +78,19 @@ class Gui:
         self.video = gridvid.GridVid(self.filename.get())
         self.video.play()
 
-    def stop_video(self, *args):
+    def stop_playback(self, *args):
         if self.video:
             self.video.stop()
 
     def prev_video(self, *args):
-        self.video.stop()
-        self.tree.focus(self.tree.prev(self.tree.item(self.tree.focus())))
+        self.stop_playback()
+        selected = self.tree.item(self.tree.focus())
+        self.tree.focus(self.tree.prev(selected))
 
     def next_video(self, *args):
-        self.video.stop()
-        self.tree.focus(self.tree.next(self.tree.item(self.tree.focus())))
+        self.stop_playback()
+        selected = self.tree.item(self.tree.focus())
+        self.tree.focus(self.tree.next(selected))
 
 
 def run():
