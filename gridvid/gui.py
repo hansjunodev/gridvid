@@ -7,8 +7,8 @@ from gridvid import utils
 
 
 class Gui:
-    filename: StringVar
-    video: gridvid.GridVid
+    filename: StringVar = ""
+    video: gridvid.GridVid = None
 
     def __init__(self, root: Tk) -> None:
         root.title("gridvid")
@@ -70,21 +70,24 @@ class Gui:
 
         root.bind("<Return>", self.play_video)
 
-    def tree_clicked(self, e):
+    def tree_clicked(self, *args):
         self.filename.set(self.tree.focus())
         print(self.tree.focus())
 
     def play_video(self, *args):
+        self.stop_playback()
         self.video = gridvid.GridVid(self.filename.get())
         self.video.play()
 
     def stop_playback(self, *args):
-        if self.video:
+        if self.video is not None:
             self.video.stop()
 
     def prev_video(self, *args):
         self.stop_playback()
         selected = self.tree.item(self.tree.focus())
+        print(selected)
+        print(self.tree.prev(selected))
         self.tree.focus(self.tree.prev(selected))
 
     def next_video(self, *args):
