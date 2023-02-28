@@ -18,9 +18,7 @@ class GridVid:
     players: list[subprocess.Popen]
 
     def __init__(self, file: str) -> None:
-        self.file = file
-        self.video = Probe(self.file)
-        self.num_splits = 3 if self.video.is_vertical else 4
+        self.load_file(file)
         self.players = []
 
     def player_dimensions(self, index: int) -> tuple:
@@ -82,7 +80,6 @@ class GridVid:
                     stdout=subprocess.DEVNULL,
                 )
             )
-
         try:
             self.wait_for_players()
         except TimeoutError:
@@ -91,6 +88,11 @@ class GridVid:
     def stop(self) -> None:
         for player in self.players:
             player.kill()
+
+    def load_file(self, file: str) -> None:
+        self.file = file
+        self.video = Probe(self.file)
+        self.num_splits = 3 if self.video.is_vertical else 4
 
 
 def run():
