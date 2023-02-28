@@ -53,10 +53,12 @@ class Gui:
         t.attributes("-topmost", True)
         t.geometry("+960+0")
         t.overrideredirect(1)
+        
         ttk.Button(t, text="<", width=3, command=self.prev_video).grid(column=1, row=1)
         ttk.Button(t, text="▶", width=3, command=self.play_video).grid(column=2, row=1)
         ttk.Button(t, text="■", width=3, command=self.stop_video).grid(column=3, row=1)
         ttk.Button(t, text=">", width=3, command=self.next_video).grid(column=4, row=1)
+        ttk.Button(t, text="X", width=3, command=lambda: root.destroy()).grid(column=5, row=1)
 
         # Add Padding
         for child in mainframe.winfo_children():
