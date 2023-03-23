@@ -24,15 +24,14 @@ class Gui:
         self.filename = StringVar()
         self.video = None
 
-        # Make Filepicker
-        self.folder.set(filedialog.askdirectory(title="Select a folder"))
+        # Make Open Folder Button
+        ttk.Button(mainframe, text="Open Folder", command=self.open_folder).grid(
+            column=1, row=0, columnspan=2, sticky=(W, E)
+        )
 
         # Make Tree
         self.tree = ttk.Treeview(mainframe)
         self.tree.grid(column=1, row=1, columnspan=2, sticky=(W, E))
-
-        for file in utils.get_video_files(self.folder.get()):
-            self.tree.insert("", "end", file.absolute(), text=file.name, tags=("file"))
 
         # self.tree.tag_configure("file", background="yellow")
         self.tree.tag_bind("file", "<ButtonRelease-1>", self.tree_clicked)
@@ -51,7 +50,19 @@ class Gui:
         )
 
         # Make Toolbar
-        t = Toplevel(root)
+        self.__initialize_toolbar()
+
+        # Add Padding
+        for child in mainframe.winfo_children():
+            child.grid_configure(padx=5, pady=5)
+
+        root.bind("<Return>", self.start_playback)
+
+    def __initialize_tree(self):
+        pass
+
+    def __initialize_toolbar(self):
+        t = Toplevel(self.root)
         t.attributes("-topmost", True)
         t.geometry("+960+0")
         t.overrideredirect(1)
@@ -70,11 +81,13 @@ class Gui:
         )
         ttk.Button(t, text="X", width=3, command=self.close).grid(column=5, row=1)
 
-        # Add Padding
-        for child in mainframe.winfo_children():
-            child.grid_configure(padx=5, pady=5)
+    def open_folder(self):
+        self.folder.set(filedialog.askdirectory(title="Select a folder"))
 
-        root.bind("<Return>", self.start_playback)
+        self.tree.delete(*self.tree.get_children())
+
+        for file in utils.get_video_files(self.folder.get()):
+            self.tree.insert("", "end", file.absolute(), text=file.name, tags=("file"))
 
     def tree_clicked(self, *args):
         self.filename.set(self.tree.focus())
