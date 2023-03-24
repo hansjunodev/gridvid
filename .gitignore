@@ -3,6 +3,7 @@ scripts/
 .vscode/
 run.bat
 focuswindow.py
+*.settings
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

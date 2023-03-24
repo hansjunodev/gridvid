@@ -15,6 +15,7 @@ gui = "gridvid.gui:run"
 [tool.poetry.dependencies]
 python = "^3.11"
 pywin32 = "^305"
+keyboard = "^0.13.5"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -53,3 +53,11 @@ def get_video_files(folder: str) -> list[pathlib.Path]:
         videos.extend(list(pathlib.Path(folder).glob(ext)))
 
     return videos
+
+
+def get_subdirectories(folder: str) -> list[pathlib.Path]:
+    return list(pathlib.Path(folder).glob("*/"))
+
+
+def get_parent_folder(folder: str) -> pathlib.Path:
+    return pathlib.Path(folder).parent
